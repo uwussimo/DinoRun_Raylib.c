@@ -98,8 +98,8 @@ void InitGame(void)
     treeSpeedX = 4;
 
     // Random offset range for tree positions
-    const int minOffset = 500; // Minimum offset
-    const int maxOffset = 1000; // Maximum offset
+    const int minOffset = 0;   // Minimum offset
+    const int maxOffset = 500; // Maximum offset
 
     for (int i = 0; i < MAX_TREES; i++)
     {
@@ -107,9 +107,16 @@ void InitGame(void)
         treesPos[i].y = -GetRandomValue(60, 100);
 
         // Add random offset to each tree position
+
+        cout << treesPos[i].x << endl
+             << treesPos[i].y << endl
+             << endl;
+
         int randomOffset = GetRandomValue(minOffset, maxOffset);
         treesPos[i].x += randomOffset;
     }
+
+    cout << "---------------------------------" << endl;
 
     for (int i = 0; i < MAX_TREES * 2; i += 2)
     {
@@ -119,6 +126,10 @@ void InitGame(void)
         trees[i + 1].rec.height = 200;
 
         trees[i / 2].active = true;
+
+        cout << trees[i + 1].rec.x << endl
+             << trees[i + 1].rec.y << endl
+             << endl;
     }
 
     score = 0;
@@ -127,7 +138,6 @@ void InitGame(void)
     pause = false;
 }
 
-
 // Update game (one frame)
 void UpdateGame(void)
 {
@@ -135,8 +145,6 @@ void UpdateGame(void)
     {
         if (IsKeyPressed('P'))
             pause = !pause;
-
-        cout << dino.position.y << endl;
 
         if (!pause)
         {
