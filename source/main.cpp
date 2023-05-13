@@ -95,25 +95,13 @@ void InitGame(void)
     dino.radius = DINO_RADIUS;
     dino.position = (Vector2){80, screenHeight - 100};
     dino.color = WHITE;
-    treeSpeedX = 4;
 
-    // Random offset range for tree positions
-    const int minOffset = 0;   // Minimum offset
-    const int maxOffset = 500; // Maximum offset
-
+    treeSpeedX = 6;
     for (int i = 0; i < MAX_TREES; i++)
     {
-        treesPos[i].x = 400 + 280 * i + 400;
+        treesPos[i].x = 800 * i + GetRandomValue(400, 800);
         treesPos[i].y = -GetRandomValue(60, 100);
-
-        // Add random offset to each tree position
-
-        cout << treesPos[i].x << endl
-             << treesPos[i].y << endl
-             << endl;
-
-        int randomOffset = GetRandomValue(minOffset, maxOffset);
-        treesPos[i].x += randomOffset;
+        cout << "MF:" << treesPos[i].x << endl;
     }
 
     cout << "---------------------------------" << endl;
@@ -174,6 +162,12 @@ void UpdateGame(void)
                 else if ((treesPos[i / 2].x < dino.position.x) && trees[i / 2].active && !gameOver)
                 {
                     score += 100;
+                    if (treeSpeedX >= 14)
+                        treeSpeedX = 14;
+                    else
+                        treeSpeedX += 1;
+                    cout << "TSX: " << treeSpeedX << endl;
+
                     trees[i / 2].active = false;
 
                     superfx = true;
@@ -205,7 +199,7 @@ void DrawGame(void)
     {
         DrawCircle(dino.position.x, dino.position.y, dino.radius, dino.color);
         DrawRectangle(0, screenHeight - 100 + dino.radius, screenWidth, 100, GREEN);
-        // Draw tubes
+        // // Draw trees
         for (int i = 0; i < MAX_TREES; i++)
         {
             DrawRectangle(trees[i * 2].rec.x, trees[i * 2].rec.y, trees[i * 2].rec.width, trees[i * 2].rec.height, BLACK);
