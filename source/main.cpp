@@ -60,10 +60,14 @@ int main(void)
     // Initialization
     //---------------------------------------------------------
     InitWindow(screenWidth, screenHeight, "Enes game");
+    InitAudioDevice();
 
     InitGame();
 
     SetTargetFPS(60);
+    Music background_music = LoadMusicStream("../assets/audio/background_music.mp3");
+    PlayMusicStream(background_music);
+
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -72,10 +76,13 @@ int main(void)
         // Update and Draw
         //----------------------------------------------------------------------------------
         UpdateDrawFrame();
+        UpdateMusicStream(background_music);
+
         //----------------------------------------------------------------------------------
     }
 
     // De-Initialization
+    CloseAudioDevice(); // Close audio device
     //--------------------------------------------------------------------------------------
     UnloadGame(); // Unload loaded data (textures, sounds, models...)
 
@@ -145,7 +152,7 @@ void UpdateGame(void)
                 trees[i + 1].rec.x = treesPos[i / 2].x;
             }
 
-            if (IsKeyPressed(KEY_SPACE) && !gameOver && dino.position.y >= 200)
+            if (IsKeyPressed(KEY_SPACE) && !gameOver && dino.position.y >= 280)
                 dino.position.y -= 200; // Jump
 
             else if (dino.position.y < screenHeight - 100)
