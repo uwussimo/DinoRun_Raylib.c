@@ -1,35 +1,237 @@
-/**
- * @file main.cpp - main file for the game
- * @authors
- * - Mukhammadyusuf Abdurakhimov <mabdurakhimov26@my.whitworth.edu>
- * - Enerelt Enkhtur <eenkhtur26@my.whitworth.edu>
- * - Micah Khatri <mkhatri26@my.whitworth.edu>
- *
- * @brief Dino Game - Final Project for CS172 - Computer Science II
- * @version 0.1
- * @date 2023-05-09
- *
- * @ref
- * - raylib: https://www.raylib.com/
- * - raylib cheatsheet: https://www.raylib.com/cheatsheet/cheatsheet.html
- * - lambda functions: https://www.cplusplus.com/doc/tutorial/functions2/
- *
- * @copyright Copyright (c) 2023
- *
- */
-
 #include <iostream>
 #include "raylib.h"
-#include "../headers/game.h"
-
 using namespace std;
 
-int main()
-{
+//----------------------------------------------------------------------------------
+// Some Defines
+//----------------------------------------------------------------------------------
+#define MAX_TREES 100
+#define DINO_RADIUS 20
+#define TREES_WIDTH 32
 
-    const int screenWidth = 800;
-    const int screenHeight = 450;
-    Game game("Dino Game - Final Project", screenWidth, screenHeight, false);
-    game.run();
+//----------------------------------------------------------------------------------
+// Types and Structures Definition
+//----------------------------------------------------------------------------------
+typedef struct Dino
+{
+    Vector2 position;
+    int radius;
+    Color color;
+} Dino;
+
+typedef struct Trees
+{
+    Rectangle rec;
+    Color color;
+    bool active;
+} Trees;
+
+//------------------------------------------------------------------------------------
+// Global Variables Declaration
+//------------------------------------------------------------------------------------
+static const int screenWidth = 1200;
+static const int screenHeight = 480;
+
+static bool gameOver = false;
+static bool pause = false;
+static int score = 0;
+static int hiScore = 0;
+
+static Dino dino = {0};
+static Trees trees[MAX_TREES * 2] = {0};
+static Vector2 treesPos[MAX_TREES] = {0};
+static int treeSpeedX = 0;
+static bool superfx = false;
+
+//------------------------------------------------------------------------------------
+// Module Functions Declaration (local)
+//------------------------------------------------------------------------------------
+static void InitGame(void);        // Initialize game
+static void UpdateGame(void);      // Update game (one frame)
+static void DrawGame(void);        // Draw game (one frame)
+static void UnloadGame(void);      // Unload game
+static void UpdateDrawFrame(void); // Update and Draw (one frame)
+
+//------------------------------------------------------------------------------------
+// Program main entry point
+//------------------------------------------------------------------------------------
+int main(void)
+{
+    // Initialization
+    //---------------------------------------------------------
+    InitWindow(screenWidth, screenHeight, "Enes game");
+
+    InitGame();
+
+    SetTargetFPS(60);
+    //--------------------------------------------------------------------------------------
+
+    // Main game loop
+    while (!WindowShouldClose()) // Detect window close button or ESC key
+    {
+        // Update and Draw
+        //----------------------------------------------------------------------------------
+        UpdateDrawFrame();
+        //----------------------------------------------------------------------------------
+    }
+
+    // De-Initialization
+    //--------------------------------------------------------------------------------------
+    UnloadGame(); // Unload loaded data (textures, sounds, models...)
+
+    CloseWindow(); // Close window and OpenGL context
+    //--------------------------------------------------------------------------------------
+
     return 0;
+}
+//------------------------------------------------------------------------------------
+// Module Functions Definitions (local)
+//------------------------------------------------------------------------------------
+
+// Initialize game variables
+// Initialize game variables
+void InitGame(void)
+{
+    dino.radius = DINO_RADIUS;
+    dino.position = (Vector2){80, screenHeight - 100};
+    dino.color = WHITE;
+    treeSpeedX = 4;
+
+    // Random offset range for tree positions
+    const int minOffset = 500; // Minimum offset
+    const int maxOffset = 1000; // Maximum offset
+
+    for (int i = 0; i < MAX_TREES; i++)
+    {
+        treesPos[i].x = 400 + 280 * i + 400;
+        treesPos[i].y = -GetRandomValue(60, 100);
+
+        // Add random offset to each tree position
+        int randomOffset = GetRandomValue(minOffset, maxOffset);
+        treesPos[i].x += randomOffset;
+    }
+
+    for (int i = 0; i < MAX_TREES * 2; i += 2)
+    {
+        trees[i + 1].rec.x = treesPos[i / 2].x;
+        trees[i + 1].rec.y = 600 + treesPos[i / 2].y - 200;
+        trees[i + 1].rec.width = TREES_WIDTH;
+        trees[i + 1].rec.height = 200;
+
+        trees[i / 2].active = true;
+    }
+
+    score = 0;
+    gameOver = false;
+    superfx = false;
+    pause = false;
+}
+
+
+// Update game (one frame)
+void UpdateGame(void)
+{
+    if (!gameOver)
+    {
+        if (IsKeyPressed('P'))
+            pause = !pause;
+
+        cout << dino.position.y << endl;
+
+        if (!pause)
+        {
+            for (int i = 0; i < MAX_TREES; i++) // Move trees
+                treesPos[i].x -= treeSpeedX;
+
+            for (int i = 0; i < MAX_TREES * 2; i += 2) // Move colliders
+            {
+                trees[i].rec.x = treesPos[i / 2].x;
+                trees[i + 1].rec.x = treesPos[i / 2].x;
+            }
+
+            if (IsKeyPressed(KEY_SPACE) && !gameOver && dino.position.y >= 200)
+                dino.position.y -= 200; // Jump
+
+            else if (dino.position.y < screenHeight - 100)
+                dino.position.y += 5;
+
+            // Check Collisions
+            for (int i = 0; i < MAX_TREES * 2; i++)
+            {
+                if (CheckCollisionCircleRec(dino.position, dino.radius, trees[i].rec))
+                {
+                    gameOver = true;
+                    pause = false;
+                }
+                else if ((treesPos[i / 2].x < dino.position.x) && trees[i / 2].active && !gameOver)
+                {
+                    score += 100;
+                    trees[i / 2].active = false;
+
+                    superfx = true;
+
+                    if (score > hiScore)
+                        hiScore = score;
+                }
+            }
+        }
+    }
+    else
+    {
+        if (IsKeyPressed(KEY_ENTER))
+        {
+            InitGame();
+            gameOver = false;
+        }
+    }
+}
+
+// Draw game (one frame)
+void DrawGame(void)
+{
+    BeginDrawing();
+
+    ClearBackground(BLUE);
+
+    if (!gameOver)
+    {
+        DrawCircle(dino.position.x, dino.position.y, dino.radius, dino.color);
+        DrawRectangle(0, screenHeight - 100 + dino.radius, screenWidth, 100, GREEN);
+        // Draw tubes
+        for (int i = 0; i < MAX_TREES; i++)
+        {
+            DrawRectangle(trees[i * 2].rec.x, trees[i * 2].rec.y, trees[i * 2].rec.width, trees[i * 2].rec.height, BLACK);
+            DrawRectangle(trees[i * 2 + 1].rec.x, trees[i * 2 + 1].rec.y, trees[i * 2 + 1].rec.width, trees[i * 2 + 1].rec.height, BLACK);
+        }
+
+        // Draw flashing fx (one frame only)
+        if (superfx)
+        {
+            // DrawRectangle(0, 0, screenWidth, screenHeight, BLACK); TODO : Sound effect here
+            superfx = false;
+        }
+
+        DrawText(TextFormat("%04i", score), 20, 20, 40, WHITE);
+        DrawText(TextFormat("HI-SCORE: %04i", hiScore), 20, 70, 20, WHITE);
+
+        if (pause)
+            DrawText("GAME PAUSED", screenWidth / 2 - MeasureText("GAME PAUSED", 40) / 2, screenHeight / 2 - 40, 40, BLACK);
+    }
+    else
+        DrawText("PRESS [ENTER] TO PLAY AGAIN", GetScreenWidth() / 2 - MeasureText("PRESS [ENTER] TO PLAY AGAIN", 20) / 2, GetScreenHeight() / 2 - 50, 20, WHITE);
+
+    EndDrawing();
+}
+
+// Unload game variables
+void UnloadGame(void)
+{
+    // TODO: Unload all dynamic loaded data (textures, sounds, models...)
+}
+
+// Update and Draw (one frame)
+void UpdateDrawFrame(void)
+{
+    UpdateGame();
+    DrawGame();
 }

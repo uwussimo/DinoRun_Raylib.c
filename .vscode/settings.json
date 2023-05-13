@@ -5,6 +5,10 @@
     "istream": "cpp",
     "ostream": "cpp",
     "typeinfo": "cpp",
-    "iostream": "cpp"
+    "iostream": "cpp",
+    "array": "cpp",
+    "memory": "cpp",
+    "tuple": "cpp",
+    "utility": "cpp"
   }
 }
