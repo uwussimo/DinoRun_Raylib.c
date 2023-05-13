@@ -1,0 +1,10 @@
+{
+  "files.associations": {
+    "*.ejs": "html",
+    "*.tcc": "cpp",
+    "istream": "cpp",
+    "ostream": "cpp",
+    "typeinfo": "cpp",
+    "iostream": "cpp"
+  }
+}
