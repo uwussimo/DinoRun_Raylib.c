@@ -4,8 +4,8 @@
 
 using namespace std;
 
-Game::Game(){
-
+Game::Game()
+{
 }
 
 void Game::InitGame(void)
@@ -133,7 +133,7 @@ void Game::DrawGame(void)
 
         DrawText(TextFormat("%04i", score), 20, 20, 40, WHITE);
         DrawText(TextFormat("HI-SCORE: %04i", hiScore), 20, 70, 20, WHITE);
-        DrawFPS(20,100);
+        DrawFPS(20, 100);
 
         if (pause)
             DrawText("GAME PAUSED", screenWidth / 2 - MeasureText("GAME PAUSED", 40) / 2, screenHeight / 2 - 40, 40, BLACK);

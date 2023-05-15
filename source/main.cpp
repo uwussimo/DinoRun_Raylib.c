@@ -16,7 +16,6 @@ int main(void)
     InitAudioDevice();
     game.InitGame();
 
-
     SetTargetFPS(60);
 
     Music background_music = LoadMusicStream("../assets/audio/background_music.mp3");

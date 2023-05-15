@@ -34,26 +34,25 @@ typedef struct Trees
 static const int screenWidth = 1200;
 static const int screenHeight = 480;
 
-
 class Game
 {
 private:
-    bool gameOver = false; // Game over flag
-    bool pause = false; // Pause flag
-    int score = 0; // Current score
-    int hiScore = 0; // Current hiscore
-    Dino dino = {0}; // Dino entity
-    Trees trees[MAX_TREES * 2] = {0}; // Trees entities
+    bool gameOver = false;             // Game over flag
+    bool pause = false;                // Pause flag
+    int score = 0;                     // Current score
+    int hiScore = 0;                   // Current hiscore
+    Dino dino = {0};                   // Dino entity
+    Trees trees[MAX_TREES * 2] = {0};  // Trees entities
     Vector2 treesPos[MAX_TREES] = {0}; // Trees positions on screen
-    float treeSpeedX = 0; // Trees speed on x axis
-    bool superfx = false; // Activate super effects
+    float treeSpeedX = 0;              // Trees speed on x axis
+    bool superfx = false;              // Activate super effects
 public:
     Game();
     void InitGame(void);
 
-    void UpdateGame(void); // Update game (one frame)
-    void DrawGame(void); // Draw game (one frame)
-    void UnloadGame(void); // Unload game variables
+    void UpdateGame(void);      // Update game (one frame)
+    void DrawGame(void);        // Draw game (one frame)
+    void UnloadGame(void);      // Unload game variables
     void UpdateDrawFrame(void); // Update and Draw (one frame)
 };
 
