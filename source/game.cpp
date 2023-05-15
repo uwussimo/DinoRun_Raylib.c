@@ -8,6 +8,39 @@ Game::Game()
 {
 }
 
+void Game::gameLoop(void)
+{
+    // Initialization
+    //---------------------------------------------------------
+    InitWindow(screenWidth, screenHeight, "Dino Run");
+    InitAudioDevice();
+    InitGame();
+    SetTargetFPS(60);
+
+    background_music = LoadMusicStream("../assets/audio/background_music.mp3");
+    //--------------------------------------------------------------------------------------
+
+    // Main game loop
+    while (!WindowShouldClose()) // Detect window close button or ESC key
+    {
+        // Update and Draw
+        //----------------------------------------------------------------------------------
+        UpdateDrawFrame();
+        UpdateMusicStream(background_music);
+
+        //----------------------------------------------------------------------------------
+    }
+
+    UnloadMusicStream(background_music); // Unload music stream buffers from RAM
+    // De-Initialization
+    CloseAudioDevice(); // Close audio device
+    //--------------------------------------------------------------------------------------
+    UnloadGame(); // Unload loaded data (textures, sounds, models...)
+
+    CloseWindow(); // Close window and OpenGL context
+    //--------------------------------------------------------------------------------------
+}
+
 void Game::InitGame(void)
 {
     dino.radius = DINO_RADIUS;
@@ -50,10 +83,15 @@ void Game::UpdateGame(void)
     if (!gameOver)
     {
         if (IsKeyPressed('P'))
+        {
             pause = !pause;
+            StopMusicStream(background_music);
+        }
 
         if (!pause)
         {
+            PlayMusicStream(background_music);
+
             for (int i = 0; i < MAX_TREES; i++) // Move trees
                 treesPos[i].x -= treeSpeedX;
 
@@ -64,7 +102,9 @@ void Game::UpdateGame(void)
             }
 
             if (IsKeyPressed(KEY_SPACE) && !gameOver && dino.position.y >= 280)
+            {
                 dino.position.y -= 200; // Jump
+            }
 
             else if (dino.position.y < screenHeight - 100)
                 dino.position.y += 5;
@@ -76,10 +116,12 @@ void Game::UpdateGame(void)
                 {
                     gameOver = true;
                     pause = false;
+                    StopMusicStream(background_music);
                 }
                 else if ((treesPos[i / 2].x < dino.position.x) && trees[i / 2].active && !gameOver)
                 {
                     score += 100;
+
                     if (treeSpeedX >= 14)
                         treeSpeedX += 0.05;
                     else
@@ -147,7 +189,6 @@ void Game::DrawGame(void)
 // Unload game variables
 void Game::UnloadGame(void)
 {
-    // TODO: Unload all dynamic loaded data (textures, sounds, models...)
 }
 
 // Update and Draw (one frame)

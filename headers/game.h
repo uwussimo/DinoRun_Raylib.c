@@ -46,10 +46,15 @@ private:
     Vector2 treesPos[MAX_TREES] = {0}; // Trees positions on screen
     float treeSpeedX = 0;              // Trees speed on x axis
     bool superfx = false;              // Activate super effects
+
+    Music background_music; // Music playing in the background
+
 public:
     Game();
-    void InitGame(void);
 
+    void gameLoop(void);
+
+    void InitGame(void);
     void UpdateGame(void);      // Update game (one frame)
     void DrawGame(void);        // Draw game (one frame)
     void UnloadGame(void);      // Unload game variables
