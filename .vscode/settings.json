@@ -9,6 +9,7 @@
     "array": "cpp",
     "memory": "cpp",
     "tuple": "cpp",
-    "utility": "cpp"
+    "utility": "cpp",
+    "xstring": "cpp"
   }
 }
