@@ -17,9 +17,6 @@ void Game::gameLoop(void)
     InitGame();
     SetTargetFPS(60);
 
-    background_music.music = LoadMusicStream("../assets/audio/background_music.mp3");
-
-    gameOverSound = LoadSound("../assets/audio/game_over.wav");
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -28,7 +25,6 @@ void Game::gameLoop(void)
         // Update and Draw
         //----------------------------------------------------------------------------------
         UpdateDrawFrame();
-        UpdateMusicStream(background_music.music);
         //----------------------------------------------------------------------------------
     }
 
@@ -44,6 +40,12 @@ void Game::gameLoop(void)
 
 void Game::InitGame(void)
 {
+    background_music.music = LoadMusicStream("../assets/audio/background_music.mp3");
+    gameOverSound = LoadSound("../assets/audio/game_over.wav");
+    winSound = LoadSound("../assets/audio/win.wav");
+    jumpSound = LoadSound("../assets/audio/jump.wav");
+    scoreSound = LoadSound("../assets/audio/score.wav");
+
     dino.radius = DINO_RADIUS;
     dino.position = {80, screenHeight - 100};
     dino.color = WHITE;
@@ -83,14 +85,11 @@ void Game::InitGame(void)
 // Update game (one frame)
 void Game::UpdateGame(void)
 {
+    UpdateMusicStream(background_music.music);
     if (background_music.playing)
-    {
         PlayMusicStream(background_music.music);
-    }
     else
-    {
         StopMusicStream(background_music.music);
-    }
 
     if (!gameOver)
     {
@@ -104,6 +103,7 @@ void Game::UpdateGame(void)
             win = true;
             gameOver = true;
             background_music.playing = false;
+            PlaySound(winSound); // Play win sound
         }
 
         if (!pause)
@@ -119,6 +119,7 @@ void Game::UpdateGame(void)
 
             if (IsKeyPressed(KEY_SPACE) && !gameOver && dino.position.y >= 280)
             {
+                PlaySound(jumpSound);   // Play jump sound
                 dino.position.y -= 200; // Jump
             }
 
@@ -133,19 +134,12 @@ void Game::UpdateGame(void)
                     gameOver = true;
                     pause = false;
                     background_music.playing = false;
-                    try
-                    {
-                        PlaySound(gameOverSound); // Play game over sound
-                    }
-                    catch (const std::exception &e)
-                    {
-                        std::cerr << e.what() << '\n';
-                    }
+                    PlaySound(gameOverSound); // Play game over sound
                 }
                 else if ((treesPos[i / 2].x < dino.position.x) && trees[i / 2].active && !gameOver)
                 {
                     score += 100;
-
+                    PlaySound(scoreSound); // Play score sound
                     if (treeSpeedX >= 14)
                         treeSpeedX += 0.05;
                     else

@@ -55,13 +55,15 @@ private:
     bool win = false;                  // Win flag
 
     MusicPlayer background_music; // Music playing in the background
-    Sound gameOverSound;          // Game over sound
+    Sound gameOverSound;          // Game over sound'
+    Sound winSound;               // Win sound
+    Sound jumpSound;              // Jump sound
+    Sound scoreSound;             // Score sound
 
 public:
     Game();
 
     void gameLoop(void);
-
     void InitGame(void);
     void UpdateGame(void);      // Update game (one frame)
     void DrawGame(void);        // Draw game (one frame)
