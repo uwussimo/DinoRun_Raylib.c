@@ -43,7 +43,7 @@ void Game::InitGame(void)
     background_music.music = LoadMusicStream("../assets/audio/background_music.mp3");
     gameOverSound = LoadSound("../assets/audio/game_over.wav");
     winSound = LoadSound("../assets/audio/win.wav");
-    jumpSound = LoadSound("../assets/audio/jump.wav");
+    jumpSound = LoadSound("../assets/audio/jump_old.wav");
     scoreSound = LoadSound("../assets/audio/score.wav");
 
     dino.radius = DINO_RADIUS;
