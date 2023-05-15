@@ -18,6 +18,8 @@ void Game::gameLoop(void)
     SetTargetFPS(60);
 
     background_music.music = LoadMusicStream("../assets/audio/background_music.mp3");
+
+    gameOverSound = LoadSound("../assets/audio/game_over.wav");
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -27,7 +29,6 @@ void Game::gameLoop(void)
         //----------------------------------------------------------------------------------
         UpdateDrawFrame();
         UpdateMusicStream(background_music.music);
-
         //----------------------------------------------------------------------------------
     }
 
@@ -132,6 +133,14 @@ void Game::UpdateGame(void)
                     gameOver = true;
                     pause = false;
                     background_music.playing = false;
+                    try
+                    {
+                        PlaySound(gameOverSound); // Play game over sound
+                    }
+                    catch (const std::exception &e)
+                    {
+                        std::cerr << e.what() << '\n';
+                    }
                 }
                 else if ((treesPos[i / 2].x < dino.position.x) && trees[i / 2].active && !gameOver)
                 {

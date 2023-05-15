@@ -55,6 +55,7 @@ private:
     bool win = false;                  // Win flag
 
     MusicPlayer background_music; // Music playing in the background
+    Sound gameOverSound;          // Game over sound
 
 public:
     Game();
