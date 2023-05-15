@@ -41,14 +41,15 @@ void Game::gameLoop(void)
 void Game::InitGame(void)
 {
     background_music.music = LoadMusicStream("../assets/audio/background_music.mp3");
-    gameOverSound = LoadSound("../assets/audio/game_over.wav");
+    gameOverSound = LoadSound("../assets/audio/emotional.wav");
     winSound = LoadSound("../assets/audio/win.wav");
     jumpSound = LoadSound("../assets/audio/jump_old.wav");
     scoreSound = LoadSound("../assets/audio/score.wav");
 
     dino.radius = DINO_RADIUS;
-    dino.position = {80, screenHeight - 100};
-    dino.color = WHITE;
+    dino.position = {80, screenHeight / 2};
+    dino.color = Color{255, 255, 255, 255};
+    dino.texture = LoadTexture("../assets/sprites/dino1.png");
 
     treeSpeedX = 6;
     for (int i = 0; i < MAX_TREES; i++)
@@ -123,13 +124,13 @@ void Game::UpdateGame(void)
                 dino.position.y -= 200; // Jump
             }
 
-            else if (dino.position.y < screenHeight - 100)
+            else if (dino.position.y < screenHeight - 200)
                 dino.position.y += 5;
 
             // Check Collisions
             for (int i = 0; i < MAX_TREES * 2; i++)
             {
-                if (CheckCollisionCircleRec(dino.position, dino.radius, trees[i].rec))
+                if (CheckCollisionRecs(Rectangle{dino.position.x, dino.position.y, float(dino.radius), float(dino.radius + 50)}, trees[i].rec))
                 {
                     gameOver = true;
                     pause = false;
@@ -175,8 +176,12 @@ void Game::DrawGame(void)
 
     if (!gameOver)
     {
-        DrawCircle(dino.position.x, dino.position.y, dino.radius, dino.color);
-        DrawRectangle(0, screenHeight - 100 + dino.radius, screenWidth, 100, GREEN);
+        // DrawCircle(dino.position.x, dino.position.y, dino.radius, dino.color);
+        DrawRectangle(dino.position.x, dino.position.y, dino.radius, dino.radius + 50, dino.color);
+        DrawTexture(dino.texture, dino.position.x, dino.position.y, WHITE);
+        DrawTextureRec(dino.texture, {0, 0, (float)dino.texture.width, (float)dino.texture.height}, dino.position, WHITE);
+
+        DrawRectangle(0, screenHeight - 100 + dino.radius, screenWidth, 100, GREEN); // Draw ground
         // // Draw trees
         for (int i = 0; i < MAX_TREES; i++)
         {

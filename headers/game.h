@@ -11,7 +11,7 @@ using namespace std;
 // Some Defines
 //----------------------------------------------------------------------------------
 #define MAX_TREES 100
-#define DINO_RADIUS 20
+#define DINO_RADIUS 107
 #define TREES_WIDTH 32
 
 //----------------------------------------------------------------------------------
@@ -22,6 +22,7 @@ typedef struct Dino
     Vector2 position;
     int radius;
     Color color;
+    Texture2D texture;
 } Dino;
 
 typedef struct Trees
