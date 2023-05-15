@@ -64,6 +64,7 @@ int main(void)
 
     InitGame();
 
+
     SetTargetFPS(60);
     Music background_music = LoadMusicStream("../assets/audio/background_music.mp3");
     PlayMusicStream(background_music);
@@ -100,7 +101,7 @@ int main(void)
 void InitGame(void)
 {
     dino.radius = DINO_RADIUS;
-    dino.position = (Vector2){80, screenHeight - 100};
+    dino.position = {80, screenHeight - 100};
     dino.color = WHITE;
 
     treeSpeedX = 6;
@@ -222,6 +223,7 @@ void DrawGame(void)
 
         DrawText(TextFormat("%04i", score), 20, 20, 40, WHITE);
         DrawText(TextFormat("HI-SCORE: %04i", hiScore), 20, 70, 20, WHITE);
+        DrawFPS(20,100);
 
         if (pause)
             DrawText("GAME PAUSED", screenWidth / 2 - MeasureText("GAME PAUSED", 40) / 2, screenHeight / 2 - 40, 40, BLACK);
