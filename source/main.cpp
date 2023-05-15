@@ -40,7 +40,7 @@ static int hiScore = 0;
 static Dino dino = {0};
 static Trees trees[MAX_TREES * 2] = {0};
 static Vector2 treesPos[MAX_TREES] = {0};
-static int treeSpeedX = 0;
+static float treeSpeedX = 0;
 static bool superfx = false;
 
 //------------------------------------------------------------------------------------
@@ -65,6 +65,7 @@ int main(void)
     InitGame();
 
     SetTargetFPS(60);
+
     Music background_music = LoadMusicStream("../assets/audio/background_music.mp3");
     PlayMusicStream(background_music);
 
@@ -77,7 +78,6 @@ int main(void)
         //----------------------------------------------------------------------------------
         UpdateDrawFrame();
         UpdateMusicStream(background_music);
-
         //----------------------------------------------------------------------------------
     }
 
@@ -170,9 +170,9 @@ void UpdateGame(void)
                 {
                     score += 100;
                     if (treeSpeedX >= 14)
-                        treeSpeedX = 14;
+                        treeSpeedX += 0.05;
                     else
-                        treeSpeedX += 1;
+                        treeSpeedX += 0.7;
                     cout << "TSX: " << treeSpeedX << endl;
 
                     trees[i / 2].active = false;
