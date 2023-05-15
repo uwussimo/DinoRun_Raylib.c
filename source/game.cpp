@@ -17,7 +17,7 @@ void Game::gameLoop(void)
     InitGame();
     SetTargetFPS(60);
 
-    background_music = LoadMusicStream("../assets/audio/background_music.mp3");
+    background_music.music = LoadMusicStream("../assets/audio/background_music.mp3");
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -26,12 +26,12 @@ void Game::gameLoop(void)
         // Update and Draw
         //----------------------------------------------------------------------------------
         UpdateDrawFrame();
-        UpdateMusicStream(background_music);
+        UpdateMusicStream(background_music.music);
 
         //----------------------------------------------------------------------------------
     }
 
-    UnloadMusicStream(background_music); // Unload music stream buffers from RAM
+    UnloadMusicStream(background_music.music); // Unload music stream buffers from RAM
     // De-Initialization
     CloseAudioDevice(); // Close audio device
     //--------------------------------------------------------------------------------------
@@ -75,23 +75,38 @@ void Game::InitGame(void)
     gameOver = false;
     superfx = false;
     pause = false;
+    win = false;
+    background_music.playing = true;
 }
 
 // Update game (one frame)
 void Game::UpdateGame(void)
 {
+    if (background_music.playing)
+    {
+        PlayMusicStream(background_music.music);
+    }
+    else
+    {
+        StopMusicStream(background_music.music);
+    }
+
     if (!gameOver)
     {
         if (IsKeyPressed('P'))
         {
             pause = !pause;
-            StopMusicStream(background_music);
+            background_music.playing = false;
+        }
+        if (score == MAX_TREES * 100)
+        {
+            win = true;
+            gameOver = true;
+            background_music.playing = false;
         }
 
         if (!pause)
         {
-            PlayMusicStream(background_music);
-
             for (int i = 0; i < MAX_TREES; i++) // Move trees
                 treesPos[i].x -= treeSpeedX;
 
@@ -116,7 +131,7 @@ void Game::UpdateGame(void)
                 {
                     gameOver = true;
                     pause = false;
-                    StopMusicStream(background_music);
+                    background_music.playing = false;
                 }
                 else if ((treesPos[i / 2].x < dino.position.x) && trees[i / 2].active && !gameOver)
                 {
@@ -181,7 +196,12 @@ void Game::DrawGame(void)
             DrawText("GAME PAUSED", screenWidth / 2 - MeasureText("GAME PAUSED", 40) / 2, screenHeight / 2 - 40, 40, BLACK);
     }
     else
-        DrawText("PRESS [ENTER] TO PLAY AGAIN", GetScreenWidth() / 2 - MeasureText("PRESS [ENTER] TO PLAY AGAIN", 20) / 2, GetScreenHeight() / 2 - 50, 20, WHITE);
+    {
+        win
+            ? DrawText("YOU WIN!", GetScreenWidth() / 2 - MeasureText("YOU WIN!", 40) / 2, GetScreenHeight() / 2 - 40, 40, WHITE)
+            : DrawText("GAME OVER", GetScreenWidth() / 2 - MeasureText("GAME OVER", 40) / 2, GetScreenHeight() / 2 - 40, 40, WHITE);
+        DrawText("PRESS [ENTER] TO PLAY AGAIN", GetScreenWidth() / 2 - MeasureText("PRESS [ENTER] TO PLAY AGAIN", 20) / 2, GetScreenHeight() / 2 - 120, 20, WHITE);
+    }
 
     EndDrawing();
 }

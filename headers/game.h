@@ -31,6 +31,12 @@ typedef struct Trees
     bool active;
 } Trees;
 
+typedef struct MusicPlayer
+{
+    Music music;
+    bool playing;
+} MusicPlayer;
+
 static const int screenWidth = 1200;
 static const int screenHeight = 480;
 
@@ -46,8 +52,9 @@ private:
     Vector2 treesPos[MAX_TREES] = {0}; // Trees positions on screen
     float treeSpeedX = 0;              // Trees speed on x axis
     bool superfx = false;              // Activate super effects
+    bool win = false;                  // Win flag
 
-    Music background_music; // Music playing in the background
+    MusicPlayer background_music; // Music playing in the background
 
 public:
     Game();
