@@ -41,20 +41,22 @@ void Game::gameLoop(void)
 void Game::InitGame(void)
 {
     background_music.music = LoadMusicStream("../assets/audio/background_music.mp3");
-    gameOverSound = LoadSound("../assets/audio/emotional.wav");
+    gameOverSound = LoadSound("../assets/audio/game_over.wav");
+    emotionalSound = LoadSound("../assets/audio/emotional.wav");
     winSound = LoadSound("../assets/audio/win.wav");
     jumpSound = LoadSound("../assets/audio/jump_old.wav");
     scoreSound = LoadSound("../assets/audio/score.wav");
 
-    dino.radius = DINO_RADIUS;
+    dino.width = 72;
+    dino.height = 122;
     dino.position = {80, screenHeight / 2};
-    dino.color = Color{255, 255, 255, 255};
+    dino.color = Color{255, 255, 255, 0};
     dino.texture = LoadTexture("../assets/sprites/dino1.png");
 
     treeSpeedX = 6;
     for (int i = 0; i < MAX_TREES; i++)
     {
-        treesPos[i].x = 800 * i + GetRandomValue(400, 800);
+        treesPos[i].x = 800 * i + GetRandomValue(1000, 1200);
         treesPos[i].y = -GetRandomValue(60, 100);
         cout << "MF:" << treesPos[i].x << endl;
     }
@@ -69,6 +71,8 @@ void Game::InitGame(void)
         trees[i + 1].rec.height = 200;
 
         trees[i / 2].active = true;
+        trees[i].texture = LoadTexture("../assets/sprites/tree.png");
+        trees[i + 1].color = Color{219, 160, 93, 100};
 
         cout << trees[i + 1].rec.x << endl
              << trees[i + 1].rec.y << endl
@@ -118,10 +122,10 @@ void Game::UpdateGame(void)
                 trees[i + 1].rec.x = treesPos[i / 2].x;
             }
 
-            if (IsKeyPressed(KEY_SPACE) && !gameOver && dino.position.y >= 280)
+            if (IsKeyPressed(KEY_SPACE) && !gameOver && dino.position.y >= 200)
             {
                 PlaySound(jumpSound);   // Play jump sound
-                dino.position.y -= 200; // Jump
+                dino.position.y -= 250; // Jump
             }
 
             else if (dino.position.y < screenHeight - 200)
@@ -130,12 +134,14 @@ void Game::UpdateGame(void)
             // Check Collisions
             for (int i = 0; i < MAX_TREES * 2; i++)
             {
-                if (CheckCollisionRecs(Rectangle{dino.position.x, dino.position.y, float(dino.radius), float(dino.radius + 50)}, trees[i].rec))
+                if (CheckCollisionRecs(Rectangle{dino.position.x, dino.position.y, float(dino.width), float(dino.height)}, trees[i].rec))
                 {
                     gameOver = true;
                     pause = false;
                     background_music.playing = false;
-                    PlaySound(gameOverSound); // Play game over sound
+                    score <= 500
+                        ? PlaySound(emotionalSound) // Play emotional sound
+                        : PlaySound(gameOverSound); // Play game over sound
                 }
                 else if ((treesPos[i / 2].x < dino.position.x) && trees[i / 2].active && !gameOver)
                 {
@@ -172,21 +178,30 @@ void Game::DrawGame(void)
 {
     BeginDrawing();
 
-    ClearBackground(BLUE);
+    bool day = true;
+    if (score / 500 % 2 == 0)
+        day = !day;
+
+    if (day)
+        ClearBackground(Color{91, 137, 255, 255});
+    else
+        ClearBackground(Color{0, 0, 0, 255});
 
     if (!gameOver)
     {
         // DrawCircle(dino.position.x, dino.position.y, dino.radius, dino.color);
-        DrawRectangle(dino.position.x, dino.position.y, dino.radius, dino.radius + 50, dino.color);
+        DrawRectangle(dino.position.x, dino.position.y, dino.width, dino.height, dino.color);
         DrawTexture(dino.texture, dino.position.x, dino.position.y, WHITE);
         DrawTextureRec(dino.texture, {0, 0, (float)dino.texture.width, (float)dino.texture.height}, dino.position, WHITE);
 
-        DrawRectangle(0, screenHeight - 100 + dino.radius, screenWidth, 100, GREEN); // Draw ground
+        DrawRectangle(0, screenHeight - dino.height + 40, screenWidth, 100, Color{77, 255, 136, 255}); // Draw ground
         // // Draw trees
         for (int i = 0; i < MAX_TREES; i++)
         {
-            DrawRectangle(trees[i * 2].rec.x, trees[i * 2].rec.y, trees[i * 2].rec.width, trees[i * 2].rec.height, BLACK);
-            DrawRectangle(trees[i * 2 + 1].rec.x, trees[i * 2 + 1].rec.y, trees[i * 2 + 1].rec.width, trees[i * 2 + 1].rec.height, BLACK);
+            DrawRectangle(trees[i * 2].rec.x, trees[i * 2].rec.y, trees[i * 2].rec.width, trees[i * 2].rec.height, trees[i * 2].color);
+            DrawRectangle(trees[i * 2 + 1].rec.x, trees[i * 2 + 1].rec.y, trees[i * 2 + 1].rec.width, trees[i * 2 + 1].rec.height, trees[i * 2 + 1].color);
+
+            DrawTextureRec(trees[i * 2].texture, {0, 0, (float)trees[i * 2].texture.width, (float)trees[i * 2].texture.height}, {trees[i * 2].rec.x - trees[i * 2].texture.width / 2 + 10, trees[i * 2].rec.y + 256}, WHITE);
         }
 
         // Draw flashing fx (one frame only)

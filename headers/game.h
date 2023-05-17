@@ -11,7 +11,6 @@ using namespace std;
 // Some Defines
 //----------------------------------------------------------------------------------
 #define MAX_TREES 100
-#define DINO_RADIUS 107
 #define TREES_WIDTH 32
 
 //----------------------------------------------------------------------------------
@@ -20,7 +19,8 @@ using namespace std;
 typedef struct Dino
 {
     Vector2 position;
-    int radius;
+    int width;
+    int height;
     Color color;
     Texture2D texture;
 } Dino;
@@ -30,6 +30,7 @@ typedef struct Trees
     Rectangle rec;
     Color color;
     bool active;
+    Texture2D texture;
 } Trees;
 
 typedef struct MusicPlayer
@@ -60,6 +61,7 @@ private:
     Sound winSound;               // Win sound
     Sound jumpSound;              // Jump sound
     Sound scoreSound;             // Score sound
+    Sound emotionalSound;         // Emotional sound
 
 public:
     Game();
