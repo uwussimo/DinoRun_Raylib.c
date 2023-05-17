@@ -40,6 +40,8 @@ void Game::gameLoop(void)
 
 void Game::InitGame(void)
 {
+    morning.texture = LoadTexture("../assets/sprites/morning.png");
+    night.texture = LoadTexture("../assets/sprites/night.png");
     background_music.music = LoadMusicStream("../assets/audio/background_music.mp3");
     gameOverSound = LoadSound("../assets/audio/game_over.wav");
     emotionalSound = LoadSound("../assets/audio/emotional.wav");
@@ -182,11 +184,13 @@ void Game::DrawGame(void)
     if (score / 500 % 2 == 0)
         day = !day;
 
-    if (day)
+    if (day){
         ClearBackground(Color{91, 137, 255, 255});
-    else
+        DrawTexture(morning.texture, 0, 0, WHITE);
+    }else{
         ClearBackground(Color{0, 0, 0, 255});
-
+        DrawTexture(night.texture, 0, 0, WHITE);
+    }
     if (!gameOver)
     {
         // DrawCircle(dino.position.x, dino.position.y, dino.radius, dino.color);

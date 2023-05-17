@@ -25,6 +25,23 @@ typedef struct Dino
     Texture2D texture;
 } Dino;
 
+typedef struct morning
+{
+    Vector2 position;
+    int width;
+    int height;
+    Color color;
+    Texture2D texture;
+} morning;
+typedef struct night
+{
+    Vector2 position;
+    int width;
+    int height;
+    Color color;
+    Texture2D texture;
+} night;
+
 typedef struct Trees
 {
     Rectangle rec;
@@ -50,6 +67,8 @@ private:
     int score = 0;                     // Current score
     int hiScore = 0;                   // Current hiscore
     Dino dino = {0};                   // Dino entity
+    morning morning = {0};             // morning entity
+    night night = {0};                 // night entity
     Trees trees[MAX_TREES * 2] = {0};  // Trees entities
     Vector2 treesPos[MAX_TREES] = {0}; // Trees positions on screen
     float treeSpeedX = 0;              // Trees speed on x axis
