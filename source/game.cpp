@@ -1,6 +1,9 @@
 #include <iostream>
 #include "raylib.h"
+#include <string>
+#include <vector>
 #include "../headers/game.h"
+#include "../headers/utils.h"
 
 using namespace std;
 
@@ -60,10 +63,7 @@ void Game::InitGame(void)
     {
         treesPos[i].x = 800 * i + GetRandomValue(1000, 1200);
         treesPos[i].y = -GetRandomValue(60, 100);
-        cout << "MF:" << treesPos[i].x << endl;
     }
-
-    cout << "---------------------------------" << endl;
 
     for (int i = 0; i < MAX_TREES * 2; i += 2)
     {
@@ -75,12 +75,9 @@ void Game::InitGame(void)
         trees[i / 2].active = true;
         trees[i].texture = LoadTexture("../assets/sprites/tree.png");
         trees[i + 1].color = Color{219, 160, 93, 100};
-
-        cout << trees[i + 1].rec.x << endl
-             << trees[i + 1].rec.y << endl
-             << endl;
     }
-
+    // set from stats
+    hiScore = stoi(stats[0][1]); // stoi converts string to int
     score = 0;
     gameOver = false;
     superfx = false;
@@ -153,14 +150,16 @@ void Game::UpdateGame(void)
                         treeSpeedX += 0.05;
                     else
                         treeSpeedX += 0.7;
-                    cout << "TSX: " << treeSpeedX << endl;
 
                     trees[i / 2].active = false;
 
                     superfx = true;
 
                     if (score > hiScore)
+                    {
                         hiScore = score;
+                        stats[0][1] = to_string(hiScore); // to_string converts int to string
+                    }
                 }
             }
         }
@@ -175,6 +174,12 @@ void Game::UpdateGame(void)
     }
 }
 
+void Game::restartGame()
+{
+    InitGame();
+    gameOver = false;
+}
+
 // Draw game (one frame)
 void Game::DrawGame(void)
 {
@@ -184,10 +189,13 @@ void Game::DrawGame(void)
     if (score / 500 % 2 == 0)
         day = !day;
 
-    if (day){
+    if (day)
+    {
         ClearBackground(Color{91, 137, 255, 255});
         DrawTexture(morning.texture, 0, 0, WHITE);
-    }else{
+    }
+    else
+    {
         ClearBackground(Color{0, 0, 0, 255});
         DrawTexture(night.texture, 0, 0, WHITE);
     }
@@ -228,6 +236,8 @@ void Game::DrawGame(void)
             ? DrawText("YOU WIN!", GetScreenWidth() / 2 - MeasureText("YOU WIN!", 40) / 2, GetScreenHeight() / 2 - 40, 40, WHITE)
             : DrawText("GAME OVER", GetScreenWidth() / 2 - MeasureText("GAME OVER", 40) / 2, GetScreenHeight() / 2 - 40, 40, WHITE);
         DrawText("PRESS [ENTER] TO PLAY AGAIN", GetScreenWidth() / 2 - MeasureText("PRESS [ENTER] TO PLAY AGAIN", 20) / 2, GetScreenHeight() / 2 - 120, 20, WHITE);
+
+        DrawButton("Quit Game", 20, Color{255, 255, 255, 255}, 200, 40, screenWidth / 2 - 100, screenHeight / 2 + 40, CloseWindow);
     }
 
     EndDrawing();

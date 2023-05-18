@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -25,22 +26,14 @@ typedef struct Dino
     Texture2D texture;
 } Dino;
 
-typedef struct morning
+typedef struct NightnMorning
 {
     Vector2 position;
     int width;
     int height;
     Color color;
     Texture2D texture;
-} morning;
-typedef struct night
-{
-    Vector2 position;
-    int width;
-    int height;
-    Color color;
-    Texture2D texture;
-} night;
+} NightnMorning;
 
 typedef struct Trees
 {
@@ -67,8 +60,8 @@ private:
     int score = 0;                     // Current score
     int hiScore = 0;                   // Current hiscore
     Dino dino = {0};                   // Dino entity
-    morning morning = {0};             // morning entity
-    night night = {0};                 // night entity
+    NightnMorning morning = {0};       // morning entity
+    NightnMorning night = {0};         // night entity
     Trees trees[MAX_TREES * 2] = {0};  // Trees entities
     Vector2 treesPos[MAX_TREES] = {0}; // Trees positions on screen
     float treeSpeedX = 0;              // Trees speed on x axis
@@ -85,12 +78,14 @@ private:
 public:
     Game();
 
+    vector<vector<string>> stats; // High scores
     void gameLoop(void);
     void InitGame(void);
     void UpdateGame(void);      // Update game (one frame)
     void DrawGame(void);        // Draw game (one frame)
     void UnloadGame(void);      // Unload game variables
     void UpdateDrawFrame(void); // Update and Draw (one frame)
+    void restartGame();         // Restart game
 };
 
 #endif // GAME_H
